@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>添加用户</title>
+    <style>
+        .title_main{
+            text-align: center;
+            font-size: 32px;
+        }
+        .main_part{
+            width: 520px;
+            height: 380px;
+            font-size: 24px;
+            margin: 10px auto;
+        }
+        .main_part [file]{
+            font-size: 24px;
+        }
+        .main_info{
+            font-size: 24px;
+            width: 260px;
+            border-radius: 6px;
+            line-height: 28px;
+           margin-top: 20px;
+        }
+        .main_part #add{
+            font-size: 24px;
+            border-radius: 6px;
+        }
+        .main_part .add_file{
+            font-size: 24px;
+        }
+    </style>
+</head>
+<body>
+<p class="title_main">添加新用户子页面</p>
+<div class="main_part">
+    <form action="users" name="add" method="post"  enctype="multipart/form-data">
+        <br>
+        头像 <input class="add_file" type="file" name="cover" id="cover"  multiple="multiple" >100*80px:
+        <br>
+        用户名：<input class="main_info" type="text" name="username" id="username">
+        <br>
+        手机号：<input class="main_info"  type="text" name="phone" id="phone">
+        <br>
+        邮 箱：<input class="main_info"  type="text" name="email" id="email">
+        <br>
+        密 码：<input class="main_info"  type="password" name="password" id="password">
+        <br>
+        确认密码：<input  class="main_info" type="password" name="repassword" id="repassword">
+        <br>
+        <br>
+        <input  type="submit" value="添加新用户" id="add">
+    </form>
+</div>
+
+
+
+</body>
+</html>

@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>管理用户</title>
+    <style>
+        .user_title{
+            text-align: center;
+            font-size: 32px;
+        }
+        #adduser{
+            font-size: 24px;
+            text-decoration: #d222ff;
+        }
+        .main_part{
+            font-size: 24px;
+            margin: 10px auto;
+        }
+    </style>
+    <script type="text/javascript" src="/static/css/js/jquery-3.4.1.min.js"></script>
+    <script>
+        $(function (){
+            var isadmin=$("#getisadmin")[0].innerHTML;
+
+            var spansedit=document.getElementsByName("toedit");
+            var spansdele=document.getElementsByName("todelete");
+            if (isadmin<6){
+                $("#adduser").attr("hidden",true);
+                for (i=0;i<spansedit.length;i++){
+                    $(spansedit)[i].hidden=true;
+                    $(spansdele)[i].hidden=true;
+                }
+            }else{
+                $("#adduser").attr("href","user_Toadd");
+                for (i=0;i<spansedit.length;i++){
+                    var spanseditname= $(spansedit)[i].className
+                    $(spansedit)[i].href="user_Toedit?id="+spanseditname;
+                    $(spansdele)[i].href="user_Delete?id="+spanseditname;
+                }
+
+            }
+        })
+    </script>
+</head>
+<body>
+<p class="user_title">用户管理 </p>
+
+<a id="adduser">添加用户</a>
+<div class="main_part">
+    <table class="adduser_table" border="1">
+        <tr>
+            <thead>
+            <th>Id</th>
+            <th>头像</th>
+            <th>用户名</th>
+            <th>Email</th>
+            <th>手机号</th>
+            <th>级别</th>
+
+            <th>注册时间</th>
+            <th>操作</th>
+
+            </tr>
+            <tr>
+            </thead>
+
+            {{range .users}}
+        <tr>
+
+            <td>{{.Id}}</td>
+            <td><img src="/{{.Cover}}"  style="width: 40px;height: 40px;" alt=""></td>
+            <td>{{.UserName}}</td>
+
+            <td>{{.Email}}</td>
+
+            <td>{{.Phone}}</td>
+            <td>{{.IsAdmin}}</td>
+
+            <td>{{date .CreateTime "Y-m-d H:i:s"}}</td>
+            <td>
+                <!--            <a title="编辑"  href="user_Toedit?id={{.Id}}">编辑</a>-->
+                <!--            <a title="删除" href= "user_Delete?id={{.Id}}">删除</a>-->
+                <span class="aaa" id="aaa">
+        <a title="编辑" class={{.Id}} id="toedit" name="toedit">编辑</a>
+        <a title="删除" class={{.Id}} id="todelete" name="todelete" >删除</a>
+        </span>
+                <a href="user_suppression?id={{.Id}}">违规_禁言</a>
+            </td>
+
+            <td></td>
+        </tr>
+        {{end}}
+
+
+    </table>
+</div>
+
+<p class="" hidden id="getisadmin">{{.userisadmin}}</p>
+</body>
+</html>

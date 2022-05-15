@@ -1,0 +1,443 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>登录成功页面</title>
+    <script src="/static/css/js/jquery-3.4.1.min.js"></script>
+    <style>
+        .Edit_center{
+            width: 380px;
+            height: 300px;
+            font-size: 32px;
+            margin: 20px auto;
+        }
+        .Edit_center select{
+            font-size: 30px;
+        }
+        .Submitquery{
+            font-size: 30px;
+            margin-bottom: 60px;
+        }
+        #querytext{
+            margin-top: 20px;
+            width: 360px;
+            height: 35px;
+            font-size: 32px;
+            border-radius: 5px;
+        }
+        a{
+            text-decoration: none;
+        }
+        .showlist #addtable{
+         margin: 40px auto;
+            font-size: 24px;
+        }
+    </style>
+    <script type="text/javascript">
+        $(function (){
+      // window.eval()
+            var isadmin=$("#getisadmin")[0].innerHTML
+
+            if (isadmin<5){
+                $("#postmang").attr("hidden",true)
+                $("#usermanag").attr("hidden",true)
+            }else{
+                $("#postmang").attr("href","post")
+                $("#usermanag").attr("href","users")
+            }
+            //采用Ajax无限循环的方式，监听按钮根据提交数据类型发送到后台查询，再反馈回来显示，再判断是否禁言删除等
+            $("#queayid").click(function (){
+            var selectresid=$("#selecfor>option:selected").val()
+                querytext=$("#querytext").val().trim()
+                if (querytext==""){
+                    alert("查询内容不能为空")
+                    return
+                }
+
+
+                if (selectresid=="用户名"){
+                    //提交地址：post_DoAsyncCms
+                    $.ajax({
+                        url:"post_AsyncCms",
+                        type:"POST",
+                        data:{"querytype":"username","name":querytext},
+                        success:function (data) {
+                            if (data["code"]==500){
+                                alert(data["msg"]);
+                                return;
+                            }
+
+                            html="";
+                            html+="<tr>"
+                            html+="<th>id</th>"
+                            html+="<th>头像</th>"
+                            html+=" <th>用户名</th>"
+                            html+="<th>Email</th>"
+                            html+="<th>手机号</th>"
+                            html+="<th>是否管理员</th>"
+                            html+="<th>注册时间</th>"
+                            html+=" <th>操作</th>"
+                            html+="</tr>"
+                            html+="<tbody id='users'>"
+                            html+=" </tbody>"
+                            $("#addtable")[0].innerHTML=html
+                            html="";
+                            if (isadmin<5){
+                                alert("没有操作权限");
+                                return;
+                            }
+
+                            $.each(data,function (i,v){
+
+                                if (isadmin<99 && v.IsAdmin>50){
+                                  return
+                                }
+                                var s=v.Id
+                                // alert(s)
+                                // operation="<span ><a id="+s+" class='"+ v.Id+"'   href='javascript:void()'>禁言</a></span>";
+                                operation="<span ><a id="+v.Id+" class='forbid'   href='javascript:void(0)'>禁言</a></span>";
+                                if(isadmin==99){
+
+                                    operation="<span ><a  id="+v.Id+"  class='edit'  href='javascript:void(0)'>编辑</a></span>"+operation;
+                                }
+                                    html+="<tr>"
+                                    html+= " <td>"+v.Id+"</td>";
+                                    html+=  "<td> <img  height=\"80px\" src=\""+'/'+v.Cover+"\" alt=\"头像\"></td>";
+                                    html+=  "<td>"+v.UserName+"</td>";
+                                    html+= "<td>"+v.Email+"</td>";
+                                    html+= "<td>"+v.Phone+"</td>";
+                                    html+="<td>"+v.IsAdmin+"</td>";
+                                    html+=" <td>"+v.CreateTime+"</td>";
+
+                                    html+=  "<td >"+operation+"</td>";
+                                    html+="</tr>";
+                            })
+                            $("#users")[0].innerHTML=html;
+                            $(".forbid").click(function () {
+                                userid=this.id
+                                // alert("禁言用户id："+userid);
+                                if (!confirm("是否确认禁言用户id："+userid)){
+                                    return false
+                                }
+                                //提交user_suppression
+                                window.location.href="user_suppression?id="+userid
+
+                            })
+                            $(".edit").click(function () {
+                                userid=this.id
+                                window.location.href="user_Toedit?id="+userid
+                            })
+                        },
+
+                    })
+
+                };
+                if (selectresid=="帖子标题"){
+
+                    $.ajax({
+                        url:"post_AsyncCms",
+                        type:"POST",
+                        data:{"querytype":"posttitle","name":querytext},
+                        success:function (data) {
+                            if (data["code"]==500||data["code"]==200){
+                                alert(data["msg"]);
+                                return;
+                            }
+                            html="";
+                            html+="<tr>"
+                            html+=" <td>帖子Id</td>"
+                            html+="<td>贴子标题</td>"
+                            html+="<td>帖子描述</td>"
+                            html+="<td>封面图</td>"
+                            html+="<td>阅读数</td>"
+                            html+="<td>点赞数</td>"
+                            html+="<td>帖子作者</td>"
+                            html+="<td>创建时间</td>"
+                            html+="<td>帖子状态</td>"
+                            html+="<td>操作</td>"
+                            html+="</tr>"
+                            html+="<tbody id='posts'>"
+                            html+=" </tbody>"
+                            $("#addtable")[0].innerHTML=html
+                            html="";
+                            if (isadmin<5){
+                                alert("没有操作权限");
+                                return;
+                            }
+
+                            $.each(data,function (i,v){
+                                // alert(i+"的元素是："+v.PostStatus+"长度是："+data.length);
+                                if (isadmin<99 && v.PostStatus>50){
+                                    return
+                                }
+                                operation="<span ><a id="+v.Id+" class='forbid'   href='javascript:void()'>禁止显示</a></span>";
+                                if(isadmin==99){
+
+                                    operation="<span ><a id="+v.Id+" class='edit'   href='javascript:void()'>编辑</a><a id="+v.Id+" class='delete'   href='javascript:void()'>删除</a></span>"+operation;
+                                }
+                                html+="<tr>"
+                                html+=" <td>"+ v.Id+"</td>"
+                                html+="<td>"+v.Title+"</td>"
+                                html+="<td>"+v.Desc+"</td>"
+                                html+=  "<td> <img  height=\"80px\" src=\""+'/'+v.Cover+"\" alt=\"帖子封面\"></td>";
+                                html+="<td>"+v.ReadNum+"</td>"
+                                html+="<td>"+v.StarNum+"</td>"
+                                html+="<td>"+v.Author.UserName+"</td>"
+                                html+="<td>"+v.CreateTime+"</td>"
+                                html+="<td>"+v.PostStatus+"</td>"
+                                html+=  "<td >"+operation+"</td>";
+                                html+="</tr>";
+                            })
+                            $("#posts")[0].innerHTML=html;
+                            $(".forbid").click(function () {
+                                postid=this.id
+                                if (!confirm("是否确认禁止显示帖子，id是："+postid)){
+                                    return false
+                                }
+                                window.location.href="post_suppression?id="+postid
+
+                            })
+                            $(".edit").click(function () {
+                                postid=this.id
+                                alert("编辑帖子id："+postid);
+                                window.location.href="post_edit?id="+postid
+
+                            })
+                            $(".delete").click(function () {
+                                postid=this.id
+                                if (!confirm("确认删除帖子和跟帖吗，id是："+postid)){
+                                    return false
+                                }
+                                window.location.href="post_delete?id="+postid
+                            })
+                        },
+                    })
+                };
+                if (selectresid=="评论内容"){
+                    $.ajax({
+                        url:"post_AsyncCms",
+                        type:"POST",
+                        data:{"querytype":"comment","name":querytext},
+                        success:function (data) {
+                            if (data["code"]==500||data["code"]==200){
+                                alert(data["msg"]);
+                                return;
+                            }
+                            html="";
+                            html+="<tr>"
+                            html+=" <td>评论ID号</td>"
+                            html+="<td>评论者</td>"
+                            html+="<td>pid（不许修改）</td>"
+                            html+="<td>创建时间</td>"
+                            html+="<td>评论内容</td>"
+                            html+="<td>评论状态</td>"
+                            html+="<td>操作</td>"
+                            html+="</tr>"
+                            html+="<tbody id='comments'>"
+                            html+=" </tbody>"
+                            $("#addtable")[0].innerHTML=html
+                            html="";
+                            if (isadmin<5){
+                                alert("没有操作权限");
+                                return;
+                            }
+                            // var i=0
+
+                            $.each(data,function (i,v){
+
+                                if (isadmin<99 && v.PostStatus>50){
+                                    return
+                                }
+                               // var s=v.Author.UserName
+                                operation="<span ><a id="+i+" name="+v.Author.UserName+" class='forbid'   href='javascript:void()'> 禁言 </a></span>";
+                                if(isadmin==99){
+
+                                    operation="<span ><a  id="+i+"  class='edit'   href='javascript:void()'> 编辑 </a><a id="+i+" class='delete'   href='javascript:void()'> 删除 </a></span>"+operation;
+                                }
+
+                                html+="<tr>"
+                                // html+="<td>"+i+"</td>"
+                                html+="<td>"+v.Id+"</td>"
+                                html+="<td>"+v.Author.UserName+"</td>"
+                                html+="<td>"+v.PId+" <span>（不许修改）</span></td>"
+                                html+="<td>"+v.CreateTime+"</td>"
+                                html+="<td>"+v.Content+"</td>"
+                                html+="<td>"+v.CommentStatus+"</td>"
+                                html+=  "<td >"+operation+"</td>";
+                                html+="</tr>";
+                            })
+                            $("#comments")[0].innerHTML=html;
+                            $(".edit").click(function () {
+                                commentauthor=this.name;
+                                id=this.id
+                                var tb=document.getElementById("comments");
+                                var comm_id =tb.rows[id].cells[0].innerText;
+                                var comm_author =tb.rows[id].cells[1].innerText;
+                                var comm_pid =tb.rows[id].cells[2].innerText;
+                                var comm_creattime =tb.rows[id].cells[3].innerText;
+                                var comm_content =tb.rows[id].cells[4].innerText;
+                                var comm_status =tb.rows[id].cells[5].innerText;
+                                var html2="";
+                                html2+="评论者ID号: <span id='com_id'></span> <br>";
+                                html2+="评论者: <span id='com_author'></span> <br>";
+                                html2+="pid: <span id='com_pid'></span> <br>";
+                                html2+="创建时间: <span id='com_creattime'></span> <br>";
+                                html2+="评论内容: <textarea name='content' id='com_content' rows='3' cols='130'  ></textarea> <br>";
+                                html2+="评论状态: <input type='text' id='com_status' value=''> （0正常，-1屏蔽） <br>";
+                                html2+="<input type='button' id='commedit' value='确认修改'>";
+                                $("#commentedit")[0].innerHTML=html2;
+                                $("#com_id")[0].innerHTML=comm_id;
+                                $("#com_author")[0].innerHTML=comm_author;
+                                $("#com_pid")[0].innerHTML=comm_pid;
+                                $("#com_creattime")[0].innerHTML=comm_creattime;
+                                $("#com_content")[0].value=comm_content;
+                                $("#com_status")[0].value=comm_status;
+                                //提交处理地址：post_DoAsyncCms
+                                $("#commedit").click(function (){
+                                    var formdata=new FormData();
+                                    //确定类型是编辑
+                                    formdata.append("operation_type","edit");
+                                    formdata.append("id",$("#com_id")[0].innerHTML);
+                                    formdata.append("author",$("#com_author")[0].innerHTML);
+                                    formdata.append("content",$("#com_content")[0].value)
+                                    formdata.append("comment_status",$("#com_status")[0].value)
+
+                                    $.ajax({
+                                        // url:"post_DoAsyncCms",
+                                        url:"post_DoAsyncCms",
+                                        type:"POST",
+                                        data:formdata,
+                                        contentType:false,
+                                        processData:false,
+                                        success:function (data) {
+                                            if (data["code"]=="200")(
+                                                alert(data["msg"])
+                                            )
+                                            if (data["code"]=="500")(
+                                                alert(data["msg"])
+                                            )
+                                        },
+                                        error:function (data) {
+                                            alert(data["msg"])
+                                        },
+                                    })
+
+                                })
+
+                            })
+                            $(".delete").click(function () {
+                                // commentauthor=this.name;
+                                id=this.id
+                                var formdata=new FormData();
+                                //确定类型是禁言
+                                if (!confirm("是否确认删除帖子：")){
+                                    return false
+                                }
+                                var tb=document.getElementById("comments");
+                                var comm_id =tb.rows[id].cells[0].innerText;
+                                formdata.append("operation_type","delete");
+                                formdata.append("id",comm_id);
+                                $.ajax({
+                                    url:"post_DoAsyncCms",
+                                    type:"POST",
+                                    data:formdata,
+                                    contentType:false,
+                                    processData:false,
+                                    success:function (data) {
+                                        if (data["code"]=="200")(
+                                            alert(data["msg"])
+                                        )
+                                        if (data["code"]=="500")(
+                                            alert(data["msg"])
+                                        )
+                                    },
+                                    error:function (data) {
+                                        alert(data["msg"])
+                                    },
+                                })
+                            })
+                            $(".forbid").click(function () {
+                                //禁言处理
+                                commentauthor=this.name;
+                                var formdata=new FormData();
+                                //确定类型是禁言
+
+                                id=this.id
+                                var tb=document.getElementById("comments");
+                                var comm_id =tb.rows[id].cells[0].innerText;
+                                formdata.append("operation_type","forbid");
+                                formdata.append("commentauthor",commentauthor);
+                                formdata.append("id",comm_id);
+
+                                if (!confirm("是否确认禁言，这将不仅仅禁言帖子作者，而且删除帖子：")){
+                                    return false
+                                }
+                                var hqid
+                                $.ajax({
+                                    url:"post_DoAsyncCms",
+                                    type:"POST",
+                                    data:formdata,
+                                    contentType:false,
+                                    processData:false,
+                                    success:function (data) {
+                                        //跳转带参数data["id"]到UserController  UserSuppress 处理
+                                        if (data["code"]=="200")(
+                                            alert(data["id"])
+                                      )
+                                        window.location.href="user_suppression?id="+data["id"]
+                                        if (data["code"]=="500")(
+                                            alert(data["msg"])
+                                        )
+                                    },
+
+                                    error:function (data) {
+                                        alert(data["msg"])
+                                    },
+                                })
+
+
+                            })
+                        },
+                    })
+                }
+            })
+        })
+    </script>
+</head>
+<body>
+<div class="Edit_center">
+    <a id="postmang" >帖子管理</a>
+    <a  id="usermanag" >用户管理</a>
+    <span class="" hidden id="getisadmin">{{.userisadmin}}</span>
+    <p></p>
+    <p>
+        <label>选择查询的类别:</label>
+
+    </p>
+    <select id="selecfor">
+        <option value="用户名">用户名</option>
+        <option value="帖子标题">帖子标题</option>
+        <option value="评论内容">评论内容</option>
+
+    </select>
+    <input type="text" id="querytext">
+    <p></p>
+    <p>
+        <input type="button" id="queayid" class="Submitquery" value="提交查询">
+    </p>
+
+
+
+</div>
+<div class="showlist">
+    <table id="addtable" border="1"  >
+
+
+    </table>
+    <div id="commentedit">
+
+    </div>
+</div>
+
+</body>
+</html>

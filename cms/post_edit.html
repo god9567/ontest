@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>添加新用户</title>
+<!--    <script>-->
+<!--        -->
+<!--        form.on('submit(add)',function (data) {-->
+<!--            var title=$("#title").val();-->
+<!--        var desc=$("#title").desc();-->
+<!--        var content=$("#content").val();-->
+<!--        var formdata=new FormData();-->
+<!--        formdata.append("title",title);-->
+<!--        formdata.append("desc",desc);-->
+<!--        formdata.append("content",content);-->
+<!--        formdata.append("cover",$("#cover")[0].files[0]);-->
+<!--        $.ajax({-->
+<!--            url:"PostController/DoAdd",-->
+<!--            type:"POST",-->
+<!--            data:formdata,-->
+<!--            contentType:false,-->
+<!--            processData:false,-->
+<!--            success:function (data) {-->
+<!--                if (data["code"]==200)(-->
+<!--                    alert(data["msg"])-->
+<!--            )-->
+<!--                    window.reload()-->
+
+
+<!--            },-->
+<!--            fail:function (data) {-->
+<!--                -->
+<!--            }-->
+<!--        });-->
+<!--        })-->
+<!--    </script>-->
+
+</head>
+<body>
+编辑页面
+<form action="post_DoEdit" name="edit" method="post"  enctype="multipart/form-data">
+    <br>
+    Id：<input type="text" name="id" value="{{.post.Id}}" id="id" >
+    <br>
+    帖子标题：<input type="text" name="title" value="{{.post.Title}}" id="title">
+    <br>
+    帖子描述：<input type="text" name="desc" value="{{.post.Desc}}" id="desc">
+    <br>
+    帖子状态99置顶，10-1帖子等级，0正常，-1屏蔽：<input type="number" name="poststatus" value="{{.post.PostStatus}}" id="poststatus">
+    <br>
+    帖子封面：
+    <img src="/{{.post.Cover}} " alt="">
+    <input type="file" name="cover" id="cover"  multiple="multiple" >
+
+    <br>
+    <span>帖子内容：</span>
+    <br>
+    <div>
+        <textarea  name="content" id="content" cols="30" rows="10" autocomplete="off" required="">{{.post.Content}}</textarea>
+    </div>
+
+    <br>
+    <input type="submit" value="提交编辑" id="add">
+</form>
+
+
+<!--    <br>-->
+<!--    邮箱：<input type="text" name="Email">-->
+<!--    <br>-->
+<!--    昵称：<input type="text" name="Email">-->
+<!--    <br>-->
+<!--    密码：<input type="text" name="Email">-->
+<!--    <br>-->
+<!--    确认密码：<input type="text" name="Email">-->
+<!--    <br>-->
+<!--    <input type="button" value="添加">-->
+
+</body>
+</html>

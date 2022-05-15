@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <script type="text/javascript" src="/static/css/js/jquery-3.4.1.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+        }
+        h1 {
+            position: absolute;
+            left: -1300px;
+        }
+
+        .top001 {
+            position: relative;
+            width: 293px;
+            height: 45px;
+            float: left;
+            margin-left: 30px;
+        }
+
+        .top001 span {
+            width: 50px;
+            height: 45px;
+            float: left;
+            margin: 0;
+            background: url(../../static/front/img/welcome.jpg) no-repeat -48px -164px;
+        }
+        .top001 .par2 {
+            width: 33px;
+            background-position: -153px -17px;
+        }
+
+        .top001 .par3 {
+            width: 35px;
+            background-position: -145px -64px;
+        }
+
+        .top001 .par4 {
+            width: 35px;
+            background-position: -85px -17px;
+        }
+
+        .top001 .par5 {
+            width: 38px;
+            background-position: -9px -114px;
+        }
+
+        .top001 .par6 {
+            width: 40px;
+            background-position: -179px -65px;
+        }
+
+        .top001 .par7 {
+            width: 32px;
+            background-position: -155px -17px;
+        }
+
+        .top1 {
+            display: inline-block;
+            height: 50px;
+            font-family: 楷体;
+            font-size: 48px;
+            margin: 0 50px;
+        }
+
+        a {
+            text-decoration: none
+        }
+
+        a.headusercss:hover {
+            font-size: 28px;
+            color: #d222ff;
+            transition: 0.2s;
+        }
+
+        .login_info_1 {
+            display: inline-block;
+            font-family: 宋体;
+            font-size: 24px;
+
+
+        }
+
+        header {
+            width: 100%;
+            height: 55px;
+
+        }
+
+        .top_3 {
+            height: 50px;
+            overflow: hidden;
+        }
+    </style>
+
+</head>
+<body>
+
+<header>
+    <h1>wkb、oncion、维卡币、wk、维卡、维卡家园</h1>
+    <div class="logcss">
+        <span class="top001">
+            <span class="par1"></span>
+            <span class="par2"></span>
+            <span class="par3"></span>
+            <span class="par4"></span>
+            <span class="par5"></span>
+            <span class="par6"></span>
+            <span class="par7"></span>
+        </span>
+        <span class="top1">维卡社区论坛</span>
+        <span class="top_3">
+
+            <span class="login_info">
+                <span class="login_info_1">
+                    <span class="login_info_2">
+                        <a class="headusercss" href="" id="welcom">{{.username}}</a>
+                        <a class="headusercss" href="" id="exit"></a>
+                    </span>
+                </span>
+            </span>
+        </span>
+    </div>
+    <script type="text/javascript">
+        var welcom = document.getElementById("welcom");
+        var exit = document.getElementById("exit");
+        if (welcom.innerText == "") {
+            welcom.innerText = "登录";
+            welcom.href = "login";
+            exit.innerText = "注册";
+            exit.href = "regist";
+        } else {
+            welcom.innerText = "欢迎{{.username}}";
+            welcom.href = "javascript:void(0)";
+            exit.innerText = "退出";
+            exit.href = "exit";
+            $(function () {
+                $("#welcom").click(function () {
+                    //提交到userinfo_edit
+                    var username = "{{.username}}";
+                    $.ajax({
+                        url: "comment/userinfo_edit",
+                        type: "GET",
+                        dataType: "json",
+                        data: {"request_type": "get", "username": username},
+                        success: function (inf) {
+                            if (inf["code"] == 200) {
+                                if (!confirm("确认修改个人信息吗")) {
+                                    return false
+                                }
+                                alert(inf["msg"]);
+                                window.location.href = "comment/userinfo_edit?request_type=get2&username=" + username
+                            }
+                        },
+                        error: function (inf) {
+                            alert(inf["msg"]);
+                        },
+                    })
+                })
+            })
+        }
+    </script>
+</header>
+</body>
+</html>

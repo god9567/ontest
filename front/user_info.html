@@ -1,0 +1,407 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <script src="/static/css/js/jquery-3.4.1.min.js"></script>
+    <link rel="stylesheet" href="/static/css/css/Cropper.css">
+    <script src="/static/css/js/cropper.min.js"></script>
+    <style>
+        a{
+            text-decoration: none;
+        }
+        body{
+            position: relative;
+        }
+        #confirm_modify{
+            /*position: absolute;*/
+            margin:20px 0 0 340px;
+            font-size: 32px;
+        }
+        .style_modi,.modifycover,.selectcover,.showResultforupload,.coversubmit{
+            font-size: 24px;
+        }
+        .title{
+            font-size: 32px;
+            display: inline-block;
+            width:100%;
+            text-align: center;
+        }
+        .st_fir{
+            font-size: 20px;
+        }
+        .st_fir2{
+            font-size: 16px;
+        }
+        #newemail{
+            width: 380px;
+            margin-left: 100px;
+        }
+        #Veri_code{
+            width: 80px;
+        }
+        #repd{
+            margin: 0 0 0 370px;
+        }
+        #v_code{
+            margin: 0 0 0 355px;
+        }
+        .modifycover:hover{
+            color: #ff1f1b;
+            cursor: pointer;
+        }
+    </style>
+    <style>
+        html, body {
+            height: 100%;
+        }
+
+        body {
+            background-color: #fff;
+            font-family: -apple-system, BlinkMacSystemFont, Roboto, Oxygen, Ubuntu, Cantarell, “Fira Sans”, “Droid Sans”, “Helvetica Neue”, Arial, sans-serif;
+        }
+
+        .container {
+            max-width: 1024px;
+            margin: 0 auto;
+            padding: 2em 0;
+        }
+
+        .row {
+            display: flex;
+            flex-direction: row;
+            justify-content: space-between;
+        }
+
+        textarea {
+            width: 50%;
+        }
+    </style>
+    <script type="text/javascript">
+      //必须进行规则验证和 数据唯一性验证，既数据库信息不能重复
+
+      window.onload=function () {
+
+          var phonereg = RegExp(/^1([38][0-9]|4[579]|5[0-3,5-9]|6[6]|7[0135678]|9[89])\d{8}$/);
+          var emailreg = RegExp(/^\w+([-+.]\w+)*@\w+([-.]\w+)*\.\w+([-.]\w+)*$/);
+          //必须大小写字母数字，6-32位
+          var passwordreg = RegExp(/^(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{6,32}$/)
+          //修改提交地址url:"comment/userinfo_edit",
+          var html = ""
+          var html2 = "", html3 = ""
+          var modi_type = ""
+          $("#phone_edit").click(function () {
+              html = ""
+              modi_type = "phone_edit"
+              $("#inser2")[0].innerHTML = ""
+              $("#inser3")[0].innerHTML = ""
+              html += " <label htmlFor='newphone' class='style_modi' >新手机号码："
+              html += "<input type='text' id='newphone' class='style_modi' value=''></label>";
+              $("#inser1")[0].innerHTML = html;
+              if ($('#confirm_modify').length == 0) {
+                  $("#confirm_btn")[0].innerHTML = "<input type='button' id='confirm_modify'class='style_modi' value='确认修改'>";
+              }else{
+                  $('#confirm_modify').val("确认修改")
+              }
+              $("#newphone").focus()
+              $("#confirm_modify").click(function () {
+                  if (modi_type == "phone_edit"){
+                      var new_phone=$("#newphone").val().trim()
+                      if ($("#old_phone").val()==new_phone){
+                          alert("两次手机号一致，无需更改！")
+                          return
+                      }
+                      if (!phonereg.test(new_phone)){
+                          alert("请输入正确的手机号码");
+                          return;
+                      }
+                      var username=$("#username")[0].innerHTML
+                      fn_phone(new_phone,username);
+                  }
+
+                 // new_phone就是合法的手机号，返回后台更改
+
+              });
+
+          })
+          $("#password_edit").click(function () {
+              html2 = ""
+              modi_type = "password_edit"
+
+              $("#inser1")[0].innerHTML = ""
+
+              $("#inser3")[0].innerHTML = ""
+              html2 += " <label htmlFor = 'password' class='style_modi' >  新 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 密&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;码："
+              html2 += " <input type='password' id='password'  class='style_modi'  value=''></label><br> <br>"
+              html2 += " <label htmlFor=’repassword' id='repd'  class='style_modi' >再次输入新密码："
+              html2 += "  <input type='password' id='repassword' class='style_modi'  value=''> </label>"
+              $("#inser2")[0].innerHTML = html2;
+
+              if ($('#confirm_modify').length == 0) {
+                  $("#confirm_btn")[0].innerHTML = "<input type='button' id='confirm_modify' value='确认修改'>";
+              }else{
+                $('#confirm_modify').val("确认修改")
+              }
+              $("#password").focus()
+              $("#confirm_modify").click(function () {
+
+                  // modi_type = "password_edit"
+                  if (modi_type == "password_edit"){
+                      var password=$("#password").val().trim()
+                      if (password!= ($("#repassword").val())) {
+                          alert("两次密码不一致！同时包含大小写字母和数字长度在6-32")
+                          return
+                      }
+                      if (!passwordreg.test(password)){
+                          alert("密码必须是包含大、小写字母、数字，长度在6-32")
+                          return
+                      }else{
+                          //password就是合法的返回后台更改密码
+                         var username=$("#username")[0].innerHTML
+                          fnpasword(password,username)
+                      }
+                  }
+
+              });
+          })
+          $("#email_edit").click(function () {
+              html3 = ""
+              modi_type = "email_edit"
+              $("#inser1")[0].innerHTML = ""
+              $("#inser2")[0].innerHTML = ""
+              html3 += "<label htmlFor = 'newemail'  class='style_modi' >  新 &nbsp; 邮 &nbsp; 箱 &nbsp; 地 &nbsp; 址："
+              html3 += "<input type='email' id='newemail'  class='style_modi' ></label><span></span><br><br>"
+              html3 += "<label htmlFor='Veri_code' id='v_code' class='style_modi' >请登录新邮箱，并输入验证码：<input id='Veri_code' class='style_modi' type='text'></label>"
+              $("#inser3")[0].innerHTML = html3
+              $("#newemail").focus()
+              $("#confirm_btn")[0].innerHTML = "<input type='button' id='confirm_modify'  class='style_modi'  value='验证邮箱'>";
+
+              $("#confirm_modify").click(function (){
+                  if (modi_type == "email_edit"){
+                      if ($("#oldemail").val()==$("#newemail").val().trim()){
+                          alert("邮箱没变，无需更改！")
+                          return;
+                      }
+                      if (!emailreg.test($("#newemail").val())) {
+                          alert("邮箱不合法！")
+                      }else {
+                          alert("邮箱正确，请到新邮箱获取验证码，并在10分钟内填入下面对话框！")
+                          var email=$("#newemail").val().trim()
+                          $("#newemail").attr("disabled",true)
+                          $("#confirm_modify").val("确认修改")
+                          var username=$("#username")[0].innerHTML
+                          var v_code= $("#Veri_code").val().trim()
+                          if ((v_code.length==6) && ($("#newemail").val().trim()!="")){
+
+                              Doemail(email,username,v_code)
+
+
+                          }else{
+                              // $("#newemail").attributes("disabled",true)
+                              fnemail(email,username)
+                          }
+
+                      }
+                  }
+
+              })
+          })
+          function fnemail(ev,username){
+             // var emildata=ev;
+             //      alert(emildata);
+                  $.ajax({
+                      url:"/loginemail",
+                      dataType:"json",
+                      data:{"emil":ev,"username":username},
+                      type:"post",
+                      success:function(message) {
+                          alert(message["msg"])
+                      },
+                      error:function (message){
+                          alert(message["msg"]);
+                      },
+                  })
+
+          }
+          function fnpasword(pwd,username){
+
+              $.ajax({
+                  url:"userinfo_edit",
+                  dataType:"json",
+                  data:{"password":pwd,"request_type":"change_pwd","username":username},
+                  type:"post",
+                  success:function(message) {
+                      alert(message["msg"])
+
+                  },
+                  error:function (message){
+                      alert(message["msg"]);
+
+                  },
+              })
+          }
+          function fn_phone(phone,username) {
+              $.ajax({
+                  url:"userinfo_edit",
+                  dataType:"json",
+                  data:{"phone":phone,"request_type":"change_phone","username":username},
+                  type:"post",
+                  success:function(message) {
+                      alert(message["msg"])
+                  },
+                  error:function (message){
+                      alert(message["msg"]);
+                  },
+              })
+          }
+          function Doemail(email,username,v_code) {
+
+              $.ajax({
+                  url:"userinfo_edit",
+                  dataType:"json",
+                  data:{"emil":email,"request_type":"change_email","username":username,"vcode":v_code},
+                  type:"post",
+                  success:function(message) {
+                      alert(message["msg"])
+                  },
+                  error:function (message){
+                      alert(message["msg"]);
+
+                  },
+              })
+          }
+
+      }
+
+
+    </script>
+</head>
+<body>
+<div class="title">用户信息编辑</div>
+<div class="uesrbaseinfo">
+    <form action="">
+       <span class="st_fir"> id: <lable>{{.user.Id}}</lable> </span><br>
+        <span class="st_fir"> 用户名: <lable id="username">{{.user.UserName}}</lable> </span> <br>
+        <span class="st_fir"> 电话号码：<input  class="st_fir2" id="old_phone" type="text" value="{{.user.Phone}}" disabled> <a id="phone_edit" href="javascript:void(0)">修改 &nbsp;</a></span><span id="inser1"></span> <br>
+        <span class="st_fir"> 密码：<input type="password" id="oldpassword" value="{{.user.Password}}"disabled> <a id="password_edit"  href="javascript:void(0)" > &nbsp; &nbsp; &nbsp; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 修改 </a> </span> &nbsp;<span id="inser2"></span> <br>
+        <br>
+        <span class="st_fir"> 邮箱：<input type="email" class="st_fir2" id="oldemail" value="{{.user.Email}}" disabled>  <a id="email_edit"  href="javascript:void(0)"> &nbsp; &nbsp; &nbsp; &nbsp;修改 </a></span><span id="inser3"></span> <br>
+        <br>
+        <span id="confirm_btn"></span><br>
+    </form>
+</div>
+<div class="modifycover">点击更改头像</div>
+<div class="htmleaf-container">
+
+    <div class="container">
+        <br>
+        <div class="row">
+            <div>
+                <div class="selectcover" id="crop">1.选择头像图片：<input type="file" accept="image/*" class="st_fir2" id="oldcover">
+                    <!--                    <img class="editimg" id="target" alt="">-->
+                </div>
+            </div>
+
+            <div>
+                <h3>截图预览(base64)</h3>
+                <button onclick="showResult()" class="showResultforupload" title="上传图片预览">2.剪裁图片</button>
+                <br>
+                <img class="clippic" src="" alt="" id="result">
+            </div>
+
+        </div>
+
+        <div class="okupload"></div>
+        <button class="coversubmit">3.保存头像图片</button>
+    </div>
+</div>
+<script type="text/javascript">
+    var url = null;
+    var cropper = new Cropper({
+        onInit: function (crop) {
+            console.info("Cropper is ready");
+        },
+        onChange: function (crop) {
+            console.log("onChange callback");
+        }
+    });
+    cropper.render("#crop");
+    function showResult() {
+        document.getElementById("result").src = cropper.getCroppedImage();
+    }
+    $(document).on('change', "#oldcover", function () {
+        //源文件:$(".editimg")[0].src
+        //选择的文件对象是:$("#oldcover")[0].files[0]，文件名：$("#oldcover")[0].files[0].name
+        // $("#target").prop("src",this.files[0])
+        $(function setData() {
+            cropper.setWidth(150)
+            cropper.setHeight(100)
+            // cropper.setData(JSON.parse(document.getElementById("data").value));
+        })
+        if (window.createObjectURL != undefined) { // basic
+            url = window.createObjectURL(this.files[0]);
+        } else if (window.URL != undefined) { // mozilla(firefox)
+            url = window.URL.createObjectURL(this.files[0]);
+        } else if (window.webkitURL != undefined) { // webkit or chrome
+            url = window.webkitURL.createObjectURL(this.files[0]);
+        }
+        cropper.loadImage(url).then(function (crop) {
+            console.info("Image is ready to crop.");
+        });
+
+    })
+    $(".coversubmit").on("click", function () {
+        if ($(".coversubmit")[0].innerText == "3.保存头像图片") {
+            var a = document.createElement("a");
+            var event = new MouseEvent('click');
+            a.download = "test.png";
+            a.href = cropper.getCroppedImage();
+            a.dispatchEvent(event)
+
+            $("#crop").attr("id", "cropold")
+
+            console.log(cropper.getCroppedImage())
+            $("#result").hide()
+            $(".cropper").hide();
+            $(".selectcover").hide()
+            $(".showResultforupload").hide()
+            $("h3").hide()
+            $(".coversubmit")[0].innerText = "5.点击上传头像文件"
+            var html = '<span class="selectcover">4.点击右边选择刚剪切的头像图片：</span><input type="file" accept="image/*" id="newcover"  name="cover" id="cover"  multiple="multiple">';
+            $(".okupload")[0].innerHTML=html
+            return
+        }
+
+        var fileupload=$("#newcover")[0].files[0]
+        var filesize = fileupload.size
+        if (filesize >= 30000) {
+            alert("文件尺寸过大，请选择剪切后的图片")
+            return;
+        }
+        var formdata=new FormData();
+        var username=$("#username")[0].innerHTML
+        formdata.append("cover",fileupload);
+        formdata.append("username",username);
+        formdata.append("request_type","usercover");
+        $.ajax({
+            url:"userinfo_edit",
+            type:"POST",
+            data:formdata,
+            contentType:false,
+            processData:false,
+            success:function (data) {
+                alert("图片OK");
+                location.href="/"
+            },
+            error:function () {
+                alert("上传图片失败")
+            }
+        })
+    })
+    $(".modifycover").on("click",function () {
+        $(".uesrbaseinfo").hide()
+        $(".modifycover")[0].innerHTML="修改头像分两大步，一：选择原图裁剪，然后保存下来。二，再次选择刚才裁剪的头像上传"
+    })
+</script>
+</body>
+</html>

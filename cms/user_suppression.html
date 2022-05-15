@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>帖子违规</title>
+    <style>
+        .main_title {
+            font-size: 32px;
+            text-align: center;
+        }
+
+        .main_edit {
+            font-size: 24px;
+            width: 460px;
+            margin: 10px auto;
+        }
+
+        .frozen_edit {
+            font-size: 24px;
+            width: 650px;
+            margin: 10px auto;
+        }
+        .submit{
+            width: 200px;
+            margin: 30px auto;
+        }
+       .submit input{
+           font-size: 32px;
+       }
+    </style>
+    <script type="text/javascript" src="/static/css/js/jquery-3.4.1.min.js"></script>
+    <script>
+        $(function () {
+            //操作者级别Opoperater_Grade
+            var Opoperater_Grade = $("#isadmin")[0].innerHTML
+            //被修改者级别frozen_Grade
+
+            var frozen_Grade = $("#frozen")[0].innerHTML
+            var frozen_id = $("#frozenid")[0].innerHTML
+            //操作逻辑如果级别小于6，不能禁言7天以上，也不能禁言99级的作者
+
+            if (Opoperater_Grade < 6) {
+                $("#set7").hide();
+                $("#set15").hide();
+                $("#setlong").hide();
+                $("#set1").hide();
+                $("#set2").hide();
+                $("#set3").hide();
+            }
+
+            $("#submit").click(function () {
+                var radioval = $("input[name='setprohibitions'][type='radio']:checked").val();
+
+                var curTime = new Date()
+                //  var caltime1= curTime.setHours(curTime.getHours() + 2);
+                //  var caltime2 = curTime.setMinutes(curTime.getMinutes() + 2);
+                //  var caltime3 = curTime.setSeconds(curTime.getSeconds() + 2);
+                // var time_res1= new Date(caltime1)
+                // var time_res2= new Date(caltime2)
+                //  var time_res3= new Date(caltime3)
+                //  alert(time_res1)
+                //  alert(time_res2)
+                //  alert(time_res3)
+                var ischange = true;
+                var formdata = new FormData();
+                if (frozen_Grade == 99) {
+
+                    ischange = false;
+                    formdata.append("ischange", ischange);
+                } else {
+                    formdata.append("ischange", ischange);
+                    formdata.append("frozenid", frozen_id);
+                    var time_res;
+                    switch (radioval) {
+                        case "-1": {
+                            //禁言2小时
+                            var caltime = curTime.setHours(curTime.getHours() + 2);
+                            time_res = new Date(caltime);
+                            break;
+                        }
+                        case "-2":
+                            //禁言8小时
+                            var caltime = curTime.setHours(curTime.getHours() + 8);
+                            time_res = new Date(caltime)
+                            break;
+                        case "-3":
+                            //禁言一天
+                            var caltime = curTime.setHours(curTime.getHours() + 24);
+                            time_res = new Date(caltime)
+                            break;
+                        case "-4":
+                            //禁言三天
+                            var caltime = curTime.setHours(curTime.getHours() + 72);
+                            time_res = new Date(caltime)
+                            break;
+                        case "-5":
+                            //禁言七天
+                            var caltime = curTime.setHours(curTime.getHours() + 168);
+                            time_res = new Date(caltime)
+                            break;
+                        case "-6":
+                            //禁言15天
+                            var caltime = curTime.setHours(curTime.getHours() + 360);
+                            time_res = new Date(caltime)
+                            break;
+                        case "-99":
+                            //永久禁言
+                            var caltime = curTime.setHours(curTime.getHours() + 87600);
+                            time_res = new Date(caltime)
+                            break;
+                        default: {
+                            alert("出错了");
+                            break;
+                        }
+                    }
+                    var d = new Date(time_res)
+                    var resDate = d.getFullYear() + '-' + p((d.getMonth() + 1)) + '-' + p(d.getDate());
+                    var resTime = p(d.getHours()) + ':' + p(d.getMinutes()) + ':' + p(d.getSeconds());
+
+                    function p(s) {
+                        return s < 10 ? '0' + s : s
+                    }
+
+                    time_res = resDate + " " + resTime
+
+                    formdata.append("frozenunblocktime", time_res)
+                }
+                $.ajax({
+                    url: "user_DoSuppress",
+                    type: "POST",
+                    data: formdata,
+                    contentType: false,
+                    processData: false,
+                    success: function (data) {
+                        if (data["code"] == "200") (
+                            alert(data["message"])
+                        )
+                        window.reload()
+
+
+                    },
+                    error: function (data) {
+                        if (data["code"] == "500") (
+                            alert(data["message"])
+                        )
+                    }
+                })
+            })
+        })
+
+
+    </script>
+</head>
+<body>
+<p class="main_title">用户禁言时间设置：</p>
+<div class="main_edit">
+    <ul>
+        <li><span>禁言用户id：</span> <span id="frozenid">{{.user.Id}}</span></li>
+        <li>用户：{{.user.UserName}}</li>
+        <li>Phone:{{.user.Phone}}</li>
+        <li>Email:{{.user.Email}}</li>
+        <li>IsAdmin：<span id="frozen">{{.user.IsAdmin}}</span></li>
+        <li> UnblockTime：{{date .user.UnblockTime "Y-m-d H:i:s"}}</li>
+    </ul>
+    <p></p>
+</div>
+<div class="frozen_edit">
+    <input type="radio" name="setprohibitions" value="-1">2小时
+    <input type="radio" name="setprohibitions" value="-2">8小时
+    <input type="radio" name="setprohibitions" value="-3">一天
+    <input type="radio" name="setprohibitions" value="-4">三天
+    <input type="radio" name="setprohibitions" value="-5" id="set7"><span id="set1">七天</span>
+    <input type="radio" name="setprohibitions" value="-6" id="set15"><span id="set2">15天</span>
+    <input type="radio" name="setprohibitions" value="-99" id="setlong"><span id="set3">永久禁言</span>
+</div>
+<span id="isadmin" hidden class=" ">{{.isadmin}}</span>
+<div class="submit">
+    <input type="button" id="submit" name="submit" value="确认提交">
+</div>
+</body>
+</html>

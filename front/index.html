@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>主页</title>
+    <link rel="stylesheet" href="/static/css/css/bootstrap.min.css">
+    <script type="text/javascript" src="/static/css/js/jquery-3.4.1.min.js"></script>
+    <script src="/static/css/js/bootstrap.min.js"></script>
+
+    <style>
+
+        ul li {
+            text-decoration: none;
+            list-style: none;
+        }
+
+        .Edit_main {
+            font-size: 22px;
+        }
+
+        .Edit_main {
+            width: 98%;
+            /*height: 580px;*/
+            display: flex;
+            margin: 0 auto;
+        }
+
+        .Edit_main_left {
+            flex: 7;
+        }
+
+        .Edit_main_right {
+            flex: 3;
+        }
+
+        .title_list, .publish_post {
+            font-size: 24px;
+        }
+
+
+        .inner span {
+            display: inline-block;
+            width: 49.5%;
+            color: #000;
+        }
+
+        .inner {
+            margin-top: -80px;
+            margin-left: -85px;
+            margin-right: -170px;
+
+        }
+
+        .inner :hover {
+            color: #d222ff;
+            cursor: pointer;
+        }
+
+        .tab-pane {
+            margin: 0 auto;
+        }
+
+        .border_0 .glyphicon-star {
+            margin-top: -80px;
+        }
+
+
+        .focus img {
+
+        }
+
+        .border_0 {
+            /*border: 100px  slateblue solid ;*/
+            border: 100px solid;
+            border-image-source: url("/static/css/img/border_img/780 (3-0).jpg");
+            border-image-width: 7px 9px 100px 7px;
+            border-image-slice: 7 9 100 7;
+            border-image-repeat: round;
+        }
+
+
+    </style>
+
+
+    <script>
+        $(function () {
+            $(".focus").click(function () {
+                var locat = "//vd4.bdstatic.com/mda-ncqaeq1bqd1m5j2d/sc/cae_h264_delogo/1648194722052653849/mda-ncqaeq1bqd1m5j2d.mp4?v_from_s=hkapp-haokan-nanjing&auth_key=1651484766-0-0-e91c4f86509ed3bd54338d7791d43b3a&bcevod_channel=searchbox_feed&pd=1&cd=0&pt=3&logid=0965977948&vid=1436636719132853875&abtest=100815_1-101454_1-101830_2-17451_2&klogid=0965977948/"
+                var locat2 = "//vd3.bdstatic.com/mda-mkv20jjdttjt5auk/sc/cae_h264_delogo/1643133455839142522/mda-mkv20jjdttjt5auk.mp4?v_from_s=hkapp-haokan-nanjing&auth_key=1651531287-0-0-715142dd2c1c0a43d7856f9a230a76eb&bcevod_channel=searchbox_feed&pd=1&cd=0&pt=3&logid=0687221322&vid=15308382042466088854&abtest=100815_1-101454_1-101830_2-17451_2&klogid=0687221322/"
+                var locat3 = "https://www.bilibili.com/video/BV1ZW411v7tF/"
+                var locat4 = "https://haokan.hao123.com/v?pd=lite_share&context=%7B%22nid%22%3A%22sv_8598904437869889600%22%2C%22sourceFrom%22%3A%22bjh%22%7D&vid=8598904437869889600&isBdboxShare=1&_refluxos=a2"
+                // window.location.assign(locat)
+                window.location.href = locat4
+            })
+        })
+
+    </script>
+</head>
+<body>
+{{template "front/header.html" .}}
+<div class="Edit_main">
+
+    <div class="Edit_main_left">
+        <!-- Nav tabs -->
+        <ul class="nav nav-tabs" role="tablist">
+            <li role="presentation" class="active"><a href="#home" aria-controls="home" role="tab"
+                                                      data-toggle="tab">精品帖子</a></li>
+            <li role="presentation"><a href="#profile" aria-controls="profile" role="tab" data-toggle="tab">最新发布</a>
+            </li>
+            <li role="presentation"><a href="#Delshaker" aria-controls="home" role="tab"
+                                       data-toggle="tab">Delshaker</a></li>
+            <li role="presentation"><a href="#Kyc_relevant" aria-controls="messages" role="tab"
+                                       data-toggle="tab">KYC相关</a></li>
+            <li role="presentation"><a href="#onecoinbackstage" aria-controls="profile" role="tab" data-toggle="tab">维卡后台</a>
+            </li>
+            <li role="presentation"><a href="#messages" aria-controls="messages" role="tab" data-toggle="tab">我要发布</a>
+            </li>
+            <li role="presentation"><a href="#settings" aria-controls="settings" role="tab" data-toggle="tab">休闲一刻</a>
+            </li>
+        </ul>
+
+        <!-- Tab panes -->
+        <div class="tab-content">
+            <div role="tabpanel" class="tab-pane active  border_0" id="home">
+                <div class="inner">
+                    <div>
+                        {{range .top_posts}}
+                        <a href="detail?id={{.Id}}" `>
+                            <span class="title_list">{{.Title}}</span>
+                        </a>
+                        {{end}}
+                        {{range .star_num}}
+                        <a href="detail?id={{.Id}}" `>
+                            <span class="title_list">{{.Title}}</span>
+                        </a>
+                        {{end}}
+
+                    </div>
+                </div>
+            </div>
+            <div role="tabpanel" class="tab-pane border_0" id="profile">
+                <div class="inner">
+                    <div>
+                        {{range .new_posts}}
+                        <a href="detail?id={{.Id}}" `>
+                            <span class="title_list">{{.Title}}</span>
+                        </a>
+                        {{end}}
+                    </div>
+                </div>
+            </div>
+            <div role="tabpanel" class="tab-pane border_0" id="Delshaker">
+                <div class="inner">
+                    Delshaker
+                </div>
+            </div>
+            <div role="tabpanel" class="tab-pane border_0" id="Kyc_relevant">
+                <div class="inner">
+                    这里是kyc的相关&nbsp;
+                </div>
+            </div>
+            <div role="tabpanel" class="tab-pane border_0" id="onecoinbackstage">
+
+                <div class="inner">
+                    这里是维卡币后台相关内容资讯
+                </div>
+            </div>
+            <div role="tabpanel" class="tab-pane border_0" id="messages">
+
+                <div class="inner ">
+                    <a class="publish_post " href="comment/f_post_add">发布帖子</a>
+                </div>
+
+            </div>
+            <div role="tabpanel" class="tab-pane" id="settings">
+                <div class="focus">
+                    <img src="/static/img/情歌赛过春江水.png" alt="">
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <!--//放在侧边栏   Delshaker  维卡币后台    周报分享   KYC相关   最新动态    联系邮箱： 其他     -->
+    <div class="Edit_main_right">
+        <!-- Nav tabs -->
+        <ul class="nav nav-tabs" role="tablist">
+
+            <li role="presentation" class="active"><a href="#weekly" aria-controls="settings" role="tab"
+                                                      data-toggle="tab">周报</a></li>
+            <li role="presentation"><a href="#Latest_developments" aria-controls="messages" role="tab"
+                                       data-toggle="tab">最新动态</a></li>
+            <li role="presentation"><a href="#other" aria-controls="messages" role="tab" data-toggle="tab">其他</a></li>
+        </ul>
+
+        <!-- Tab panes -->
+        <div class="tab-content">
+
+
+            <div role="tabpanel" class="tab-pane active" id="weekly">
+                这里是周报分享
+            </div>
+            <div role="tabpanel" class="tab-pane" id="Latest_developments">
+                这里是最新动态&nbsp;
+            </div>
+
+            <div role="tabpanel" class="tab-pane" id="other">
+                联系邮箱：onecoinserver@126.com
+            </div>
+        </div>
+    </div>
+
+    <!--    字体图标-->
+
+</div>
+
+<span class="glyphicon glyphicon-star" aria-hidden="true"> {{template "front/footer.html" .}}</span>
+</body>
+</html>

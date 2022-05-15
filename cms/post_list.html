@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>帖子列表</title>
+    <style>
+        .add_title{
+            text-align: center;
+            line-height: 48px;
+        }
+        .add_title a{
+            font-size: 32px;
+            text-decoration: none;
+        }
+        .layui_table{
+            margin: 10px auto;
+            font-size: 24px;
+        }
+    </style>
+    <script type="text/javascript" src="/static/css/js/jquery-3.4.1.min.js"></script>
+    <script>
+        $(function (){
+            var isadmin=$("#getisadmin")[0].innerHTML;
+            var spansedit=document.getElementsByName("toedit");
+            var spansdele=document.getElementsByName("todelete");
+            var deles =[]
+            var index=0
+            if (isadmin<6){
+                $("#addpost").attr("hidden",true);
+                for (i=0;i<spansedit.length;i++){
+                    $(spansedit)[i].hidden=true;
+                    $(spansdele)[i].hidden=true;
+               }
+            }else{
+                $("#addpost").attr("href","post_ToAdd");
+                for (i=0;i<spansedit.length;i++){
+                    var spanseditname= $(spansedit)[i].className
+                    $(spansedit)[i].href="post_edit.html?id="+spanseditname;
+                }
+                $(function (){
+                    $("#aaa a:last-child").click(function (){
+                        if (!confirm("是否确认删除！")){
+                            return false
+                        }
+                        var idd=this.className
+                      var deltitle= this.title
+                        $.ajax({
+                            url:"post_delete",
+                            type:"get",
+                            data:{
+                                "id":idd,
+                            },
+                            success:function (data){
+                                if (data["code"]==200){
+                                    //注意，这里既要删除本地存储的帖子信息，也要删除文件夹下面的头像信息
+                                    var approv=localStorage.getItem("approv")
+                                    if (approv!=null){
+
+                                        approv=JSON.parse(approv)
+                                        $.each(approv,function (i,v) {
+                                            if (v.title==deltitle){
+                                                approv.splice(i,1)
+                                                localStorage.setItem("approv",JSON.stringify(approv))
+                                           }
+                                        })
+                                    }
+                                    alert(data["msg"])
+                                }
+                            },
+                            error:function (data){
+                                alert(data["msg"])
+                            }
+                        })
+
+
+                    })
+                })
+            }
+
+        })
+    </script>
+</head>
+<body>
+
+<!--<a href="post_ToAdd">添加帖子</a>-->
+<div class="add_title">
+    <a  id="addpost">添加帖子</a>
+</div>
+
+<table class="layui_table" border="1">
+    <thead>
+        <tr>
+            <th>Id</th>
+            <th>贴子标题</th>
+            <th>帖子描述</th>
+            <th>封面图</th>
+            <th>阅读数</th>
+            <th>点赞数</th>
+            <th>作者</th>
+            <th>创建时间</th>
+            <th>帖子状态</th>
+            <th>操作</th>
+        </tr>
+    </thead>
+    {{range .posts}}
+    <tr>
+        <td>{{.Id}}</td>
+        <td class="gettitle">{{.Title}}</td>
+        <td>{{.Desc}}</td>
+        <td><img src="/{{.Cover}}"  style="width: 40px;height: 40px;" alt=""></td>
+        <td>{{.ReadNum}}</td>
+        <td>{{.StarNum}}</td>
+        <td>{{.Author.UserName}}</td>
+        <td>{{date .CreateTime "Y-m-d H:i:s"}}</td>
+        <td>{{.PostStatus}}</td>
+        <td>
+            <span class="aaa" id="aaa">
+                <a title="编辑" class={{.Id}} id="toedit" name="toedit">编辑</a>
+                <a title={{.Title}} class={{.Id}} id="todelete" name="todelete" href="javascript:void(0) " >删除</a>
+            </span>
+            <a href="post_suppression?id={{.Id}}">违规_禁止显示</a>
+        </td>
+    </tr>
+    {{end}}
+</table>
+<p class="" hidden id="getisadmin">{{.userisadmin}}</p>
+</body>
+</html>

@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>发布帖子</title>
+    <script src="/static/css/js/jquery-3.4.1.min.js"></script>
+    <link rel="stylesheet" href="/static/css/css/Cropper.css">
+    <script src="/static/css/js/cropper.min.js"></script>
+    <style>
+        .addPostcover {
+            display: inline-block;
+            font-size: 24px;
+            margin-left: 20px;
+        }
+
+        .addPostcover:hover {
+            color: #ff5312;
+            cursor: pointer;
+        }
+    </style>
+    <script>
+        //发帖限制判断
+        $(function () {
+
+            $("#add").click(function () {
+                // var isadmin=$("#isadmin").val();
+                var UnblockTime = $("#UnblockTime").val();
+                var _time = new Date();
+                var curr_time = _time.setSeconds(_time.getSeconds() + 0);
+                var Unblock_date = UnblockTime.substring(0, 19);
+                Unblock_date = Unblock_date.replace(/[- :]/g, ''); //必须把日期'-'转为'/'
+
+                var d = new Date(curr_time)
+                var resDate = d.getFullYear() + '-' + p((d.getMonth() + 1)) + '-' + p(d.getDate());
+                var resTime = p(d.getHours()) + ':' + p(d.getMinutes()) + ':' + p(d.getSeconds());
+
+                function p(s) {
+                    return s < 10 ? '0' + s : s;
+                }
+
+                var now_format_time = resDate + " " + resTime;
+                var new_time = now_format_time.replace(/[- :]/g, '');
+
+                if (Unblock_date - new_time > 0) {
+                    alert("禁言状态，不能发帖")
+                } else {
+                    // alert("OK，可以发帖")
+                    if ($("#title").val() == "") {
+                        alert("标题不能为空！")
+                        return
+                    }
+                    var formdata = new FormData();
+                    var file=$("#cover")[0].files[0]
+                   if (file.size>102400){
+                       alert("封面图片过大，不能超过1Mb,请刷新后按照提示截图，注意保存位置，然后重新选择")
+                       return;
+                   }
+                    formdata.append("title", $("#title").val());
+                    formdata.append("desc", $("#desc").val());
+                    formdata.append("cover", file);
+                    formdata.append("content", $("#content").val());
+
+                    $.ajax({
+                        url: "f_post_Doadd",
+                        type: "POST",
+                        data: formdata,
+                        contentType: false,
+                        processData: false,
+                        success: function (data) {
+                            if (data["code"] == "200") (
+                                alert(data["msg"])
+                            )
+                            if (data["code"] == "500") (
+                                alert(data["msg"])
+                            )
+
+                        },
+                        error: function (data) {
+                            if (data["code"] == "500") (
+                                alert(data["msg"])
+                            )
+                        }
+                    })
+                }
+            })
+        })
+    </script>
+    <style>
+        .zhuticent {
+            margin: 40px auto;
+            width: 680px;
+
+            background-color: #f1ff98;
+        }
+
+        .mystyle01, .mystyle02 {
+            font-size: 18px;
+            margin: 5px 0 0 20px;
+        }
+
+        .mystyle02 {
+            border-radius: 4px;
+            width: 300px;
+            height: 24px;
+            border-color: #fffcb4;
+        }
+
+        textarea {
+            width: 670px;
+            height: 150px;
+            font-size: 24px;
+        }
+
+        hr {
+            border-color: #ffef75;
+        }
+
+        .selectcover, .showResultforupload, .coversubmit {
+            font-size: 24px;
+        }
+
+        .introduce {
+            font-size: 24px;
+            display: block;
+        }
+
+    </style>
+    <style>
+        html, body {
+            height: 100%;
+        }
+
+        body {
+            background-color: #fff;
+            font-family: -apple-system, BlinkMacSystemFont, Roboto, Oxygen, Ubuntu, Cantarell, “Fira Sans”, “Droid Sans”, “Helvetica Neue”, Arial, sans-serif;
+        }
+
+        .container {
+            max-width: 100%;
+            margin: 0 auto;
+            padding: 2em 0;
+        }
+
+        .row {
+            /*display: flex;*/
+            /*flex-direction: row;*/
+            /*justify-content: space-between;*/
+        }
+        .base64 {
+            flex: 1;
+        }
+    </style>
+</head>
+<body>
+{{template "front/header.html" .}}
+<!--<form action="f_post_Doadd" name="add" method="post"  enctype="multipart/form-data">-->
+<div class="zhuticent">
+    <form id="form">
+        <br>
+        <span class="mystyle01">帖子标题：</span> <input type="text" class="mystyle02" name="title" id="title">
+        <br>
+        <span class="mystyle01 ">帖子描述：</span> <input type="text" class="mystyle02" name="desc" id="desc">
+        <br>
+        <span class="mystyle01 Postcover"> 帖子封面：</span><input type="file" accept="image/*" class="mystyle02 Postcover" name="cover"
+                                                              id="cover" multiple="multiple">
+        <span class="addPostcover">添加帖子封面图片(可以不添加)</span>
+        <div class="htmleaf-container">
+
+            <div class="container">
+                <br>
+                <div class="row">
+
+                    <div class="base64">
+                        <p class="introduce">添加帖子封面图为可选项，分为两大步:</p>
+                        <p class="introduce">第一：选择一张图，可以拉动图像下面滑块调整图像</p>
+                        <p class="introduce">第二：选择裁剪后的图片上传:</p>
+                        <br>
+                        <div class="selectcover" id="crop">1.选择原始图片：<input type="file" accept="image/*" class="st_fir2"
+                                                                           id="oldcover">
+                            <!--                    <img class="editimg" id="target" alt="">-->
+                        </div>
+                    </div>
+
+                    <div class="">
+                        <h3 class="Screenshot_preview">截图预览</h3>
+                        <button onclick="showResult()" class="showResultforupload Screenshot_preview" title="上传图片预览">
+                            2.剪裁图片
+                        </button>
+                        <br>
+                        <img class="clippic" src="" alt="" id="result">
+                    </div>
+
+                </div>
+
+                <div class="okupload"></div>
+                <button class="coversubmit save_preview">3.保存头像图片</button>
+            </div>
+        </div>
+
+        <script type="text/javascript">
+            var url = null;
+            $(".Postcover").hide()
+            $(".introduce").hide()
+            $(".selectcover").hide()
+            $(".Screenshot_preview").hide()
+            $(".save_preview").hide()
+            // $("#oldcover").hide()
+
+            var cropper = new Cropper({
+                onInit: function (crop) {
+                    console.info("Cropper is ready");
+                },
+                onChange: function (crop) {
+                    console.log("onChange callback");
+                }
+            });
+            cropper.render("#crop");
+
+            function showResult() {
+                document.getElementById("result").src = cropper.getCroppedImage();
+            }
+
+            $(document).on('change', "#oldcover", function () {
+
+                //源文件:$(".editimg")[0].src
+                //选择的文件对象是:$("#oldcover")[0].files[0]，文件名：$("#oldcover")[0].files[0].name
+                // $("#target").prop("src",this.files[0])
+                $(function setData() {
+                    cropper.setWidth(280)
+                    cropper.setHeight(200)
+                    // cropper.setData(JSON.parse(document.getElementById("data").value));
+                })
+                if (window.createObjectURL != undefined) { // basic
+                    url = window.createObjectURL(this.files[0]);
+                } else if (window.URL != undefined) { // mozilla(firefox)
+                    url = window.URL.createObjectURL(this.files[0]);
+                } else if (window.webkitURL != undefined) { // webkit or chrome
+                    url = window.webkitURL.createObjectURL(this.files[0]);
+                }
+                cropper.loadImage(url).then(function (crop) {
+                    console.info("Image is ready to crop.");
+                });
+
+            })
+            $(".coversubmit").on("click", function () {
+                var a = document.createElement("a");
+                var event = new MouseEvent('click');
+                a.download = "test.png";
+                a.href = cropper.getCroppedImage();
+                a.dispatchEvent(event)
+                $("#crop").attr("id", "cropold")
+                console.log(cropper.getCroppedImage())
+                $("#result").hide()
+                $(".cropper").hide();
+                $(".selectcover").hide()
+
+                $(".showResultforupload").hide()
+
+                $("h3").hide()
+                $(".Postcover").show()
+                $(".save_preview").hide()
+
+            })
+            $(".modifycover").on("click", function () {
+                $(".uesrbaseinfo").hide()
+                $(".modifycover")[0].innerHTML = "修改头像分两大步，一：选择原图裁剪，然后保存下来。二，再次选择刚才裁剪的头像上传"
+            })
+            $('.addPostcover').on('click', function () {
+                $('.selectcover').show()
+            })
+            $('.selectcover').on('change', function () {
+
+                $('.Screenshot_preview').show()
+                $('.addPostcover').hide()
+
+            })
+            $('.Screenshot_preview').on('click', function () {
+                $('.selectcover').hide()
+                $('.save_preview').show()
+
+
+            })
+
+        </script>
+        <br>
+
+        <hr>
+        <span class="mystyle01 Postcover">帖子内容：</span>
+        <br>
+        <div>
+            <textarea class="Postcover" name="content" id="content" autocomplete="off" required=""></textarea>
+        </div>
+        <input type="text" hidden id="isadmin" value="{{.user.IsAdmin}}">
+        <input type="text" hidden id="UserName" value="{{.user.UserName}}">
+        <input type="text" hidden id="UnblockTime" value="{{.user.UnblockTime}}">
+        <br>
+        <input type="button" class="mystyle01" value="发布帖子" id="add">
+    </form>
+</div>
+
+
+{{template "front/footer.html" .}}
+</body>
+</html>

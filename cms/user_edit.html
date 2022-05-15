@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>用户编辑</title>
+    <style>
+        .main_title{
+            font-size: 32px;
+            text-align: center;
+        }
+        .main_edit{
+            font-size: 24px;
+            width: 880px;
+            height: 500px;
+            margin: 10px auto;
+        }
+        .main_edit img{
+            width: 150px;
+            height: 150px;
+        }
+       .main_edit .main_midify{
+           font-size: 24px;
+           width: 260px;
+           margin-top: 20px;
+       }
+        .main_edit .password_md5{
+            width: 420px;
+        }
+        .main_edit .edit_file,.submit_midify{
+            font-size: 24px;
+        }
+    </style>
+</head>
+<body>
+
+<p class="main_title">用户编辑页面</p>
+
+<div class="main_edit">
+    <form action="user_Doedit" name="useredit" method="post"  enctype="multipart/form-data">
+        <br>
+        Id：<input type="text" name="id" value="{{.user.Id}}" id="id" hidden>
+        <br>
+        用户名：<input class="main_midify" type="text" name="username"  value="{{.user.UserName}}" id="username">
+        <br>
+        密码：<input class="main_midify password_md5" type="text" name="password"  value="{{.user.Password}}" id="password">
+        是否MD5：<input class="" type="checkbox" name="ismd5"  checked="checked" id="ismd5">
+        <br>
+        手机号：<input class="main_midify" type="text" name="phone" value="{{.user.Phone}}" id="phone">
+        <br>
+        Email：<input class="main_midify" type="text" name="email" value="{{.user.Email}}" id="email">
+        <br>
+        是否管理员：<input class="main_midify" type="text" name="isadmin" value="{{.user.IsAdmin}}" id="isadmin">
+
+        <br>
+        用户头像：
+        <img src="/{{.user.Cover}}" alt="">
+        <input class="edit_file" type="file" name="cover" id="cover"  multiple="multiple" >
+
+        <br>
+        <br>
+        <input class="submit_midify" type="submit" value="确认修改" >
+    </form>
+</div>
+
+
+</body>
+</html>

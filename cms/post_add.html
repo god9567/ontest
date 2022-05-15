@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>添加帖子</title>
+    <style>
+        .add_post_head{
+            font-size: 32px;
+           text-align: center;
+        }
+        .edit_center{
+            font-size: 24px;
+            width: 480px;
+            height: 490px;
+            margin: 0 auto;
+        }
+        .edit_center textarea{
+            font-size: 24px;
+        }
+        .edit_center .my_style{
+            font-size: 24px;
+            width: 260px;
+            height: 35px;
+            border-radius: 5px;
+            margin: 10px 0;
+        }
+        .edit_center #add{
+            font-size: 32px;
+            margin: 10px 0;
+        }
+
+    </style>
+</head>
+<body>
+<p class="add_post_head">添加帖子</p>
+<div class="edit_center">
+    <form action="post_DoAdd" name="add" method="post"  enctype="multipart/form-data">
+        <br>
+        帖子标题：<input type="text" name="title" class="my_style"  id="title">
+        <br>
+        帖子描述：<input type="text" name="desc" class="my_style"  id="desc">
+        <br>
+        帖子封面240*200px：<input type="file" name="cover" id="cover" class="my_style"  multiple="multiple" >
+
+        <br>
+        <span>帖子内容：</span>
+        <br>
+        <div>
+            <textarea  name="content" id="content" cols="30" rows="3" autocomplete="off" required=""></textarea>
+        </div>
+
+        <br>
+        <input type="submit" value="添加帖子" id="add">
+    </form>
+</div>
+
+
+</body>
+</html>

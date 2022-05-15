@@ -1,0 +1,501 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>帖子详情</title>
+    <script type="text/javascript" src="/static/css/js/jquery-3.4.1.min.js"></script>
+    <link href="/static/css/font-awesome.min.css" rel="stylesheet">
+    <style>
+        .myborder {
+            width: 90%;
+            height: 70%;
+            border: 50px solid;
+            border-image-source: url("/static/css/img/border_img/780 (12-1).jpg");
+            border-image-slice: 51 49 53 48;
+            border-image-width: 51px 49px 53px 48px;
+
+        }
+
+        .subject_border {
+            width: 80%;
+            margin: 0 auto;
+            border: 45px solid;
+            border-image-source: url("/static/css/img/border_img/border-3.png");
+            border-image-slice: 12 66 46 142;
+            border-image-width: 12px 66px 46px 142px;
+        }
+
+        .conent_edit, .t421_00 {
+            margin-left: 60px;
+        }
+
+        .t421_2 {
+            width: 80%;
+            margin: 0 auto;
+            border: 45px solid;
+            border-image-source: url("/static/css/img/border_img/boder_ok.png");
+            border-image-slice: 24 81 79 76;
+            border-image-width: 24px 81px 79px 76px;
+            display: flex;
+        }
+
+        .t421_2_0 {
+            flex: 1;
+            margin: -20px 0 0 30px;
+        }
+
+        .head_left {
+            width: 480px;
+            height: 280px;
+            margin: 0 auto;
+            display: none;
+        }
+
+        .post_head {
+            width: 100%;
+            height: 100%;
+        }
+
+        .myborder {
+            width: 50%;
+            margin: 0 auto;
+            display: flex;
+        }
+
+        .head_right {
+            flex: 12%;
+
+        }
+
+        .head_right_2 {
+            flex: 88%;
+        }
+
+        .t421_1 {
+            display: block;
+            margin: 10px auto;
+        }
+
+        .post_author {
+            display: block;
+            text-align: center;
+        }
+
+        h2 {
+            text-align: center;
+            margin: 20px 0 20px 0;
+        }
+
+        h3 {
+            margin-left: 40px;
+        }
+        #content,#Comment_add{
+           margin-left:100px;
+        }
+
+        .t421_03,.t421_3 {
+            float: right;
+            margin-right: 30px;
+        }
+
+        .fa-heart {
+            color: #ff1f1b;
+        }
+
+        .author_edit {
+            float: right;
+            font-size: 20px;
+            color: #ff221a;
+            margin-right: 40px;
+            margin-bottom: 10px;
+            display: none;
+        }
+
+        .t421_font {
+            font-size: 24px;
+        }
+
+    </style>
+
+</head>
+<body>
+{{template "front/header.html" .}}
+<div class="head_left">
+    <img class="post_head" src="/{{.post.Cover}}" alt="帖子图片">
+</div>
+<div class="top_head2 myborder">
+    <div class="head_right">
+        <img class="t421_1" src="/{{.post.Author.Cover}}" alt="作者">
+        <span class="post_author">{{.post.Author.UserName}}</span>
+    </div>
+    <div class="head_right_2">
+        <h2 class="t421_font_0 ">{{.post.Title}}</h2>
+        <p class="t421_03">
+            阅读：<span>{{.post.ReadNum}}&nbsp;&nbsp;</span>
+            <a href="javascript:void(0) " class="approval"> 点赞 <i class="fa fa-heart fa-lg"></i></a><span>{{.post.StarNum}}&nbsp;&nbsp;</span>
+            创作时间：<span>{{date .post.CreateTime "Y-m-d H:i:s"}}</span>
+        </p>
+    </div>
+
+</div>
+<span hidden class="user_info">{{$.username}}</span>
+
+<div class="subject_border top_head2">
+    <pre> <span class="t421_00">{{.post.Content}}</span></pre>
+    <a href="#" class="author_edit">点击修改</a>
+    <div class="conent_edit">
+        <textarea name="reconnent" id="reconnent" cols="80" rows="3"></textarea>
+    </div>
+</div>
+<h3>评论区</h3>
+<input type="hidden" name="id" value="{{.post.Id}}" id="post_id"/>
+<input type="hidden" id="p_id" value="" name="p_id"/>
+<div class="left_0 top_head2">
+    <div class="">
+        <div class="comment-form">
+            <div>
+                <ul class="firstcommend">
+                    <li>
+                        {{range .comment_trees}}
+                        <!--            一级评论-->
+                        <!--            评论内容-->
+                        <div class="t421_0">
+                            <div class="t421_2">
+                                <div class="t421_2_0">
+                                    <div>
+                                        <pre class="t421_font">{{.Content}}</pre>
+                                    </div>
+                                    <div class="comment">
+                                    <span class="t421_3">
+                                        评论人：<span>{{.Author.UserName}}</span>
+                                        评论时间：<span>{{date .CreateTime "Y-m-d H:i:s"}}</span>
+                                        <input type="hidden" value="{{.Author.UserName}}">
+                                        <input type="hidden" value="{{.Id}}" class="getid">
+                                        <a style="cursor:pointer;" class="reply">回复</a>
+                                    </span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <!--            //下面是二级评论-->
+                        {{range .Childern}}
+                        <!--            评论内容-->
+                        <div class="t421_2">
+                            <div class="t421_2_0">
+                                <pre class="t421_font "> {{.Content}}</pre>
+                                <br>
+                                <span class="t421_3">
+                                   评论者：<span>{{.Author.UserName}}</span>
+                                   评论时间：<span>{{date .CreateTime "Y-m-d H:i:s"}}</span>
+                                </span>
+                            </div>
+                        </div>
+                        {{end}}
+                        {{end}}
+                    </li>
+                </ul>
+            </div>
+            <div class="t421_0">
+                <p>
+                    <textarea class="t421_font" name="content" id="content" rows="3" cols="60"
+                              aria-required="true"></textarea>
+                </p>
+                <p class="form_submit">
+                    <input class="t421_font" type="button" id="Comment_add" class="button" value="发表评论">
+                    <input type="text" id="getcommentusername" hidden value="{{.username}}">
+                </p>
+            </div>
+        </div>
+    </div>
+</div>
+<span class="UnblockTime" hidden>{{.unblocktime}}</span>
+<br>
+
+
+<!--</div>-->
+<!--<span>{{.Post.Content}}</span>-->
+<span class="top_head2"></span>{{template "front/footer.html" .}}
+<script>
+    $(".t421_00")[0].style.fontSize = "24px";
+    $(".top_head2").hide()
+    $(".head_left").fadeIn(1200)
+    $(".conent_edit").hide()
+    $(".head_left").on("mouseover", function () {
+        $(".head_left").fadeOut(1000, function () {
+            $(".top_head2").slideDown(1600)
+        })
+    })
+
+</script>
+<!--//Ajax提交测试-->
+
+<script>
+    //如果
+    var comment_add = document.getElementById("Comment_add");
+    var flag_withdraw = 0;
+    comment_add.onclick = function () {
+        ppost_id = $("#post_id").val()
+        p_id = $("#p_id").val()
+        content = $("#content").val()
+        //ajax提交，封装到下面的函数，先允许120秒撤回
+        var first = document.querySelector(".firstcommend")
+        var pre = document.createElement("pre")
+        pre.innerHTML = content;
+        pre.setAttribute("class", "t421_font");
+        first.appendChild(pre);
+        $("#content").val("");
+        var withdraw_time = 10;
+        $(function () {
+            flag_withdraw = flag_withdraw + 1;
+            after();
+        });
+
+        function after() {
+            $("#Comment_add")[0].value = "在" + withdraw_time + "秒内可以撤回";
+            withdraw_time = withdraw_time - 1;
+            var times = setTimeout(function () {
+                after();
+            }, 1000);
+            if (flag_withdraw > 1) {
+                $("#Comment_add")[0].value = "发表评论";
+                clearTimeout(times);
+                location.reload()
+                return
+            }
+            if (withdraw_time < 0) {
+                $("#Comment_add")[0].value = "发表评论";
+                clearTimeout(times);
+                Confirmsubmission(ppost_id, p_id, content)
+            }
+
+        }
+    }
+    //自动刷新页面上的时间
+    var Confirmsubmission = function (ppost_id, p_id, content) {
+
+        $.ajax({
+            url: '{{urlfor "CommentController.Post"}}',
+            type: "POST",
+            data: {
+                "post_id": ppost_id,
+                "p_id": p_id,
+                "content": content
+            },
+            success: function (data) {
+                if (data["code"] == 200) {
+                    alert(data["msg"])
+                    window.location.reload()
+                } else {
+                    if (data["code"] == 401) {
+                        window.location.href = "/login.html"
+                    }
+                    alert(data["msg"]);
+                }
+            },
+            fail: function (data) {
+                alert(data)
+            }
+        })
+    }
+    var replys = document.getElementsByClassName("reply")
+    for (var i = 0; i < replys.length; i++) {
+        replys[i].onclick = function (ev) {
+
+            var input_id_tag = this.previousElementSibling || this.previousSibling;
+            var comment_id = input_id_tag.value;
+
+            var input_username_tag = input_id_tag.previousElementSibling || input_id_tag.previousSibling;
+            var user_name = input_username_tag.value;
+            var content = document.getElementById("content");
+            var pid = document.getElementById("p_id");
+            placeCaretAtEnd(content);
+            var getcommusername = $("#getcommentusername").val()
+            content.value = getcommusername + "@" + user_name;
+            content.focus()
+            pid.value = comment_id;
+        }
+    }
+
+    function placeCaretAtEnd(el) { //传入光标要去的jq节点对象el.focus();
+        if (typeof window.getSelection != "undefined" && typeof document.createRange != "undefined") {
+            var range = document.createRange();
+            range.selectNodeContents(el);
+            range.collapse(false);
+            var sel = window.getSelection();
+            sel.removeAllRanges();
+            sel.addRange(range);
+        } else if (typeof document.body.createTextRange != "undefined") {
+            var textRange = document.body.createTextRange();
+            textRange.moveToElementText(el);
+            textRange.collapse(false);
+            textRange.select();
+        }
+    }
+
+    //下面对阅读数和点赞数的处理
+    var title = $(".t421_font_0")[0].innerText
+    var username = $(".user_info")[0].innerHTML
+    var id = $("#post_id").val()
+    var approv_info = [{
+        "title": title,
+        "postid": id,
+        "name": username,
+        "reads": false,
+        "approv": false
+    }]
+    if (localStorage.getItem("approv") == null) {
+        localStorage.setItem("approv", JSON.stringify(approv_info));
+    }
+
+    //点击点赞 ok
+    var star = ""
+    var fn = function (star) {
+        var formdata = new FormData();
+        var loca_data = localStorage.getItem("approv")
+        loca_data = JSON.parse(loca_data)
+        var flag = 0;
+        $.each(loca_data, function (i, e) {
+            if ((e.title == title) && (e.name == username)) {
+                flag = 1
+                formdata.append("reads", e.reads)
+                if (star == true) {
+
+                    formdata.append("approv", e.approv);
+                }
+            }
+        })
+        if (flag == 0) {
+            loca_data.push({
+                "title": title, "postid": id,
+                "name": username,
+                "reads": false,
+                "approv": false
+            })
+            localStorage.setItem("approv", JSON.stringify(loca_data));
+            formdata.append("reads", false);
+            if (star == true) {
+                formdata.append("approv", false);
+            }
+        }
+        //id是帖子id
+        formdata.append("id", id);
+        $.ajax({
+            url: "detail",
+            type: "POST",
+            data: formdata,
+            contentType: false,
+            processData: false,
+            success: function (data) {
+                if (data["code"] == 200) {
+                    loca_data = localStorage.getItem("approv");
+                    loca_data = JSON.parse(loca_data)
+                    if (data["reads"] == "true") {
+                        $.each(loca_data, function (i, e) {
+                            if ((e.title == title) && (e.name == username)) {
+                                e.reads = "true"
+                            }
+                        })
+
+
+                    }
+                    if (data["approv"] == "true") {
+
+                        $.each(loca_data, function (i, e) {
+                            if ((e.title == title) && (e.name == username)) {
+                                e.approv = "true"
+                            }
+                        })
+                    }
+                    localStorage.setItem("approv", JSON.stringify(loca_data))
+                }
+            },
+            error: function (data) {
+                if (data["code"] == "500") {
+                    alert(data["msg"])
+                }
+            }
+        })
+    }
+    $(".approval").on("click", function () {
+        star = true
+        fn(star)
+    })
+    fn("")
+    //下面编写对自己发布的主体帖子可以编辑
+    if (($(".post_author")[0].innerText).trim() === ($(".user_info")[0].innerText).trim()) {
+        //有编辑权
+        $(".author_edit")[0].style.display = "block";
+    }
+    $(".author_edit").click(function () {
+        $(".conent_edit").slideDown(1000)
+
+        $("#reconnent")[0].style.fontSize = '24px';
+        // $(".conent_edit")[0].style.display = "block";
+
+        if ($(".author_edit")[0].innerText == "点击修改") {
+
+            $("#reconnent")[0].value = $(".t421_00")[0].innerText
+
+            $(".author_edit")[0].innerText = "提交编辑";
+        } else {
+            //修改后的内容：
+            var newconent = $("#reconnent")[0].value
+            //帖子标题：
+            var title = $(".t421_font_0")[0].innerText
+
+            $(".author_edit")[0].innerText = "点击修改"
+            //查看禁用状态下不能修改
+            var UnblockTime = $(".UnblockTime")[0].innerText;
+
+            var _time = new Date();
+            var curr_time = _time.setSeconds(_time.getSeconds() + 0);
+            var Unblock_date = UnblockTime.substring(0, 19);
+            Unblock_date = Unblock_date.replace(/[- :]/g, ''); //必须把日期'-'转为'/'
+
+            var d = new Date(curr_time)
+            var resDate = d.getFullYear() + '-' + p((d.getMonth() + 1)) + '-' + p(d.getDate());
+            var resTime = p(d.getHours()) + ':' + p(d.getMinutes()) + ':' + p(d.getSeconds());
+
+            function p(s) {
+                return s < 10 ? '0' + s : s;
+            }
+
+            var now_format_time = resDate + " " + resTime;
+            var new_time = now_format_time.replace(/[- :]/g, '');
+
+            if (Unblock_date - new_time > 0) {
+                alert("禁言状态，不能修改内容")
+            } else {
+                // 正常提交修改内容 Ajax提交就可以
+                $.ajax({
+                    url: "conentedit",
+                    dataType: "json",
+                    data: {"newconent": newconent, "title": title},
+                    type: "post",
+                    success: function (msg) {
+                        if (msg["code"] == 200) {
+                            location.reload()
+                            alert("修改成功")
+                        }
+                    },
+                    error: function (msg) {
+                        alert("msg['msg']")
+                    }
+
+                })
+
+            }
+
+
+            //Ajax提交编辑内容判断是否处于禁言状态
+
+
+        }
+
+
+    })
+
+</script>
+
+</body>
+</html>
